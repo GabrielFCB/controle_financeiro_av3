@@ -33,6 +33,7 @@ defmodule ControleFinanceiroAv3.MixProject do
   defp deps do
     [
       {:phoenix, "~> 1.7.21"},
+      {:phoenix_view, "~> 2.0"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
@@ -58,7 +59,6 @@ defmodule ControleFinanceiroAv3.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
-      {:bcrypt_elixir, "~> 3.0"},
       {:joken, "~> 2.5"}
     ]
   end
