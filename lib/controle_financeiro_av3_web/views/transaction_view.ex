@@ -18,7 +18,8 @@ defmodule ControleFinanceiroAv3Web.TransactionView do
       data: transaction.data,
       user_id: transaction.user_id,
       data_criacao: transaction.inserted_at,
-      data_atualizacao: transaction.updated_at
+      data_atualizacao: transaction.updated_at,
+      tags: render_many(transaction.tags, ControleFinanceiroAv3Web.TagView, "tag.json")
     }
   end
 
