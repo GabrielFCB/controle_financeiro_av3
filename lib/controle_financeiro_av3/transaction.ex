@@ -8,6 +8,7 @@ defmodule ControleFinanceiroAv3.Transaction do
     field :tipo, :string
     field :data, :naive_datetime
     belongs_to :user, ControleFinanceiroAv3.User
+    many_to_many :tags, ControleFinanceiroAv3.Tag, join_through: "transactions_tags"
 
     timestamps()
   end
