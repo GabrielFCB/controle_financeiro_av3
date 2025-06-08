@@ -9,6 +9,7 @@ defmodule ControleFinanceiroAv3.User do
     field :senha_hash, :string
     field :data_criacao, :naive_datetime
     field :data_atualizacao, :naive_datetime
+    has_many :transactions, ControleFinanceiroAv3.Transaction
 
     timestamps()
   end
