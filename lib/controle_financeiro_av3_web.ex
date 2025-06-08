@@ -50,6 +50,19 @@ defmodule ControleFinanceiroAv3Web do
     end
   end
 
+  def view do
+    quote do
+      use Phoenix.View,
+        root: "lib/controle_financeiro_av3_web/templates",
+        namespace: ControleFinanceiroAv3Web
+
+      import Phoenix.Controller,
+        only: [get_flash: 1, get_flash: 2, view_module: 1, view_template: 1]
+
+      unquote(html_helpers())
+    end
+  end
+
   def live_view do
     quote do
       use Phoenix.LiveView,
