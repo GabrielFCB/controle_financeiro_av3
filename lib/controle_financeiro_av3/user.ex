@@ -5,7 +5,8 @@ defmodule ControleFinanceiroAv3.User do
   schema "users" do
     field :nome, :string
     field :email, :string
-    field :senha, :string, virtual: true # Campo virtual (não persiste no BD)
+    # Campo virtual (não persiste no BD)
+    field :senha, :string, virtual: true
     field :senha_hash, :string
     field :data_criacao, :naive_datetime
     field :data_atualizacao, :naive_datetime
@@ -26,8 +27,8 @@ defmodule ControleFinanceiroAv3.User do
   end
 
   defp put_pass_hash(%Ecto.Changeset{valid?: true, changes: %{senha: senha}} = changeset) do
-    # Hash temporário - será substituído por Bcrypt depois
-    change(changeset, senha_hash: "plain_#{senha}")
+    put_change(changeset, :senha_hash, Pbkdf2.hash_pwd_salt(senha))
   end
+
   defp put_pass_hash(changeset), do: changeset
 end
