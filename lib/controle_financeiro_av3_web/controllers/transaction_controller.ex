@@ -2,18 +2,30 @@ defmodule ControleFinanceiroAv3Web.TransactionController do
   use ControleFinanceiroAv3Web, :controller
   alias ControleFinanceiroAv3.Repo
   alias ControleFinanceiroAv3.Transaction
+  import Ecto.Query
 
   def index(conn, _params) do
-    transactions = Repo.all(Transaction) |> Repo.preload([:user, :tags])
+    current_user_id = conn.assigns.current_user_id
+
+    transactions =
+      Transaction
+      |> where([t], t.user_id == ^current_user_id)
+      |> Repo.all()
+      |> Repo.preload([:user, :tags])
+
     render(conn, "index.json", transactions: transactions)
   end
 
   def create(conn, %{"transaction" => transaction_params}) do
-    changeset = Transaction.changeset(%Transaction{}, transaction_params)
+    current_user_id = conn.assigns.current_user_id
+    params_with_user = Map.put(transaction_params, "user_id", current_user_id)
+
+    changeset = Transaction.changeset(%Transaction{}, params_with_user)
 
     case Repo.insert(changeset) do
       {:ok, transaction} ->
         transaction = Repo.preload(transaction, [:user, :tags])
+
         conn
         |> put_status(:created)
         |> render("show.json", transaction: transaction)
@@ -26,37 +38,64 @@ defmodule ControleFinanceiroAv3Web.TransactionController do
   end
 
   def show(conn, %{"id" => id}) do
-    transaction = Repo.get!(Transaction, id) |> Repo.preload([:user, :tags])
-    render(conn, "show.json", transaction: transaction)
+    current_user_id = conn.assigns.current_user_id
+
+    case Repo.get_by(Transaction, id: id, user_id: current_user_id) do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Transaction not found"})
+
+      transaction ->
+        transaction = Repo.preload(transaction, [:user, :tags])
+        render(conn, "show.json", transaction: transaction)
+    end
   end
 
   def update(conn, %{"id" => id, "transaction" => transaction_params}) do
-    transaction = Repo.get!(Transaction, id)
-    changeset = Transaction.changeset(transaction, transaction_params)
+    current_user_id = conn.assigns.current_user_id
 
-    case Repo.update(changeset) do
-      {:ok, transaction} ->
-        transaction = Repo.preload(transaction, [:user, :tags])
-        render(conn, "show.json", transaction: transaction)
-
-      {:error, changeset} ->
+    case Repo.get_by(Transaction, id: id, user_id: current_user_id) do
+      nil ->
         conn
-        |> put_status(:unprocessable_entity)
-        |> render("errors.json", changeset: changeset)
+        |> put_status(:not_found)
+        |> json(%{error: "Transaction not found"})
+
+      transaction ->
+        changeset = Transaction.changeset(transaction, transaction_params)
+
+        case Repo.update(changeset) do
+          {:ok, transaction} ->
+            transaction = Repo.preload(transaction, [:user, :tags])
+            render(conn, "show.json", transaction: transaction)
+
+          {:error, changeset} ->
+            conn
+            |> put_status(:unprocessable_entity)
+            |> render("errors.json", changeset: changeset)
+        end
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    transaction = Repo.get!(Transaction, id)
+    current_user_id = conn.assigns.current_user_id
 
-    case Repo.delete(transaction) do
-      {:ok, _} ->
-        send_resp(conn, :no_content, "")
-
-      {:error, changeset} ->
+    case Repo.get_by(Transaction, id: id, user_id: current_user_id) do
+      nil ->
         conn
-        |> put_status(:unprocessable_entity)
-        |> render("errors.json", changeset: changeset)
+        |> put_status(:not_found)
+        |> json(%{error: "Transaction not found"})
+
+      transaction ->
+        case Repo.delete(transaction) do
+          {:ok, _} ->
+            send_resp(conn, :no_content, "")
+
+          {:error, changeset} ->
+            conn
+            |> put_status(:unprocessable_entity)
+            |> render("errors.json", changeset: changeset)
+        end
     end
   end
 end

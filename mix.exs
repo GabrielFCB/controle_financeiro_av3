@@ -60,7 +60,7 @@ defmodule ControleFinanceiroAv3.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:joken, "~> 2.5"},
-      {:pbkdf2_elixir, "~> 2.0"}, # Substitua o bcrypt por esta linha
+      {:pbkdf2_elixir, "~> 2.0"},
       {:comeonin, "~> 5.3"}
     ]
   end

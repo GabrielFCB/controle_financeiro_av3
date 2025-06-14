@@ -14,12 +14,27 @@ defmodule ControleFinanceiroAv3Web.Router do
     plug :accepts, ["json"]
   end
 
+ pipeline :api_auth do
+    plug :accepts, ["json"]
+    plug ControleFinanceiroAv3Web.Plugs.Auth
+  end
+
+
   scope "/api", ControleFinanceiroAv3Web do
+    # Rotas PÚBLICAS (sem autenticação)
     pipe_through :api
 
-    resources "/users", UserController, except: [:new, :edit]
-    resources "/transactions", TransactionController, except: [:new, :edit]
-    resources "/tags", TagController, except: [:new, :edit]
+    post "/users", UserController, :create
+    post "/login", AuthController, :login
+
+    # Rotas PRIVADAS (com autenticação)
+    scope "/" do
+      pipe_through :api_auth
+
+      resources "/users", UserController, except: [:create]
+      resources "/transactions", TransactionController
+      resources "/tags", TagController
+    end
   end
 
   # Other scopes may use custom stacks.
