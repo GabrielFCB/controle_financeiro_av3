@@ -14,8 +14,21 @@ defmodule ControleFinanceiroAv3Web.TransactionJSON do
       valor: transaction.valor,
       tipo: transaction.tipo,
       data: transaction.data,
-      user_id: transaction.user_id
+      user_id: transaction.user_id,
+      # Adicionado esta linha
+      tags: tags_data(transaction.tags || [])
     }
+  end
+
+  # Nova função para formatar as tags
+  defp tags_data(tags) do
+    Enum.map(tags, fn tag ->
+      %{
+        id: tag.id,
+        nome: tag.nome
+        # Adicione outros campos de tag se necessário
+      }
+    end)
   end
 
   def errors(%{changeset: changeset}) do

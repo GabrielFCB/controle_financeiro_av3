@@ -10,8 +10,7 @@ defmodule ControleFinanceiroAv3Web.TagJSON do
   defp tag_data(tag) do
     %{
       id: tag.id,
-      nome: tag.nome,
-      user_id: tag.user_id
+      nome: tag.nome
     }
   end
 

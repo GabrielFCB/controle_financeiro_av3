@@ -55,7 +55,7 @@ defmodule ControleFinanceiroAv3Web.TransactionController do
   def update(conn, %{"id" => id, "transaction" => transaction_params}) do
     current_user_id = conn.assigns.current_user_id
 
-    case Repo.get_by(Transaction, id: id, user_id: current_user_id) do
+    case Repo.get_by(Transaction |> preload(:tags), id: id, user_id: current_user_id) do
       nil ->
         conn
         |> put_status(:not_found)
