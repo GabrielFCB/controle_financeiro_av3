@@ -5,10 +5,10 @@ defmodule ControleFinanceiroAv3Web.AuthController do
   def login(conn, %{"email" => email, "senha" => senha}) do
     case Auth.authenticate(email, senha) do
       {:ok, user} ->
-        {:ok, token, _claims} = Auth.generate_token(user)  # Corrigido aqui
+        {:ok, token, _claims} = Auth.generate_token(user)
         conn
         |> put_status(:ok)
-        |> render("login.json", token: token)  # Agora só o token string
+        |> render("login.json", token: token)
 
       {:error, reason} ->
         conn

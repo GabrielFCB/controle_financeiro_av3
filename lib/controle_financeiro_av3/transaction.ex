@@ -37,7 +37,6 @@ defmodule ControleFinanceiroAv3.Transaction do
       tag_ids when is_list(tag_ids) ->
         current_user_id = get_field(changeset, :user_id)
 
-        # Busca tags verificando o user_id diretamente na query
         tags =
           Repo.all(
             from(t in Tag,
@@ -46,7 +45,6 @@ defmodule ControleFinanceiroAv3.Transaction do
             )
           )
 
-        # Verifica se todas as tags solicitadas foram encontradas
         if length(tags) == length(Enum.uniq(tag_ids)) do
           put_assoc(changeset, :tags, tags)
         else

@@ -23,7 +23,7 @@ defmodule ControleFinanceiroAv3Web.UserController do
   # Ações abaixo são privadas - requerem autenticação
   def index(conn, _params) do
     current_user_id = conn.assigns.current_user_id
-    users = Repo.all(User)  # ATENÇÃO: Isso retorna todos os usuários - considere se é desejado
+    users = Repo.all(User)
     render(conn, "index.json", users: users)
   end
 

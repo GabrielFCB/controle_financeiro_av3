@@ -5,7 +5,6 @@ defmodule ControleFinanceiroAv3.User do
   schema "users" do
     field :nome, :string
     field :email, :string
-    # Campo virtual (não persiste no BD)
     field :senha, :string, virtual: true
     field :senha_hash, :string
     field :data_criacao, :naive_datetime
@@ -23,6 +22,7 @@ defmodule ControleFinanceiroAv3.User do
     |> unique_constraint(:email)
     |> validate_format(:email, ~r/@/)
     |> validate_length(:senha, min: 6)
+    |> put_date_fields()
     |> put_pass_hash()
   end
 
@@ -31,4 +31,12 @@ defmodule ControleFinanceiroAv3.User do
   end
 
   defp put_pass_hash(changeset), do: changeset
+
+  defp put_date_fields(changeset) do
+    now = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
+
+    changeset
+    |> put_change(:data_criacao, now)
+    |> put_change(:data_atualizacao, now)
+  end
 end
